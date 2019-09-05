@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nkl.page.dao.ILogisticsDao">
+
+	<insert id="addLogistics" parameterType="Logistics">
+		<![CDATA[
+			insert into logistics
+				values(null,#{orders_no},#{logistics_date},#{logistics_desc})
+		]]>
+	</insert>
+
+	<delete id="delLogistics" parameterType="int">
+		<![CDATA[
+			delete from logistics where logistics_id=#{logistics_id}
+		]]>
+	</delete>
+
+	<delete id="delLogisticss" parameterType="int">
+		<![CDATA[
+			delete from logistics where logistics_id in 
+		]]>
+		<foreach collection="array" item="logistics_ids"  open="(" separator="," close=")">
+			#{logistics_ids}
+		</foreach>
+	</delete>
+
+	<update id="updateLogistics" parameterType="Logistics">
+		<![CDATA[
+			UPDATE logistics
+		]]>
+		<set>
+			<if test="">
+			<![CDATA[
+				
+			]]>
+			</if>
+		</set>
+		<![CDATA[
+			where logistics_id = #{logistics_id}
+		]]>
+	</update>
+
+	<select id="getLogistics" parameterType="Logistics" resultType="Logistics">
+		<![CDATA[
+			SELECT * FROM logistics
+		]]>
+		<where>
+			<if test="logistics_id!=0">
+			<![CDATA[
+				logistics_id = #{logistics_id}
+			]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="listLogisticss" parameterType="Logistics" resultType="Logistics">
+		<![CDATA[
+			SELECT * FROM (
+			SELECT * FROM logistics s
+		]]>
+		<where>
+			<if test="logistics_id!=0">
+			<![CDATA[
+				logistics_id = #{logistics_id}
+			]]>
+			</if>
+			<if test="orders_no!=null and orders_no!=''">
+			<![CDATA[
+				and orders_no = #{orders_no}
+			]]>
+			</if>
+		</where>
+		<![CDATA[
+			order by s.logistics_date asc,s.logistics_id asc) t
+		]]>
+		<if test="start!=-1">
+		<![CDATA[
+			Limit ${start},${limit}
+		]]>
+		</if>
+	</select>
+
+	<select id="listLogisticssCount" parameterType="Logistics" resultType="int">
+		<![CDATA[
+			SELECT count(*) FROM logistics
+		]]>
+		<where>
+			<if test="logistics_id!=0">
+			<![CDATA[
+				logistics_id = #{logistics_id}
+			]]>
+			</if>
+			<if test="orders_no!=null and orders_no!=''">
+			<![CDATA[
+				and orders_no = #{orders_no}
+			]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="getLogisticsId" parameterType="User" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT max(logistics_id) FROM logistics WHERE user_id=#{user_id}
+		]]>
+	</select>
+
+</mapper>

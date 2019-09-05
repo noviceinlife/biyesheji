@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nkl.page.dao.IGoodsDao">
+
+	<insert id="addGoods" parameterType="Goods">
+		<![CDATA[
+			insert into goods
+				values(null,#{user_id},#{goods_name},#{goods_type1},#{goods_type2},#{goods_price},#{goods_desc},#{goods_sale},#{goods_click},#{user_phone},#{user_qq},#{goods_address},#{goods_date},#{goods_flag},#{goods_status})
+		]]>
+	</insert>
+
+	<delete id="delGoods" parameterType="int">
+		<![CDATA[
+			delete from goods where goods_id=#{goods_id}
+		]]>
+	</delete>
+
+	<delete id="delGoodss" parameterType="int">
+		<![CDATA[
+			delete from goods where goods_id in 
+		]]>
+		<foreach collection="array" item="goods_ids"  open="(" separator="," close=")">
+			#{goods_ids}
+		</foreach>
+	</delete>
+
+	<update id="updateGoods" parameterType="Goods">
+		<![CDATA[
+			UPDATE goods
+		]]>
+		<set>
+			<if test="goods_name!=null and goods_name!=''">
+			<![CDATA[
+				goods_name = #{goods_name},
+			]]>
+			</if>
+			<if test="goods_type1!=null and goods_type1!=''">
+			<![CDATA[
+				goods_type1 = #{goods_type1},
+			]]>
+			</if>
+			<if test="goods_type2!=null and goods_type2!=''">
+			<![CDATA[
+				goods_type2 = #{goods_type2},
+			]]>
+			</if>
+			<if test="goods_price!=0">
+			<![CDATA[
+				goods_price = #{goods_price},
+			]]>
+			</if>
+			<if test="goods_desc!=null and goods_desc!=''">
+			<![CDATA[
+				goods_desc = #{goods_desc},
+			]]>
+			</if>
+			<if test="goods_sale!=0">
+			<![CDATA[
+				goods_sale = #{goods_sale},
+			]]>
+			</if>
+			<if test="goods_click!=0">
+			<![CDATA[
+				goods_click = #{goods_click},
+			]]>
+			</if>
+			<if test="user_phone!=null and user_phone!=''">
+			<![CDATA[
+				user_phone = #{user_phone},
+			]]>
+			</if>
+			<if test="user_qq!=null and user_qq!=''">
+			<![CDATA[
+				user_qq = #{user_qq},
+			]]>
+			</if>
+			<if test="goods_address!=null and goods_address!=''">
+			<![CDATA[
+				goods_address = #{goods_address},
+			]]>
+			</if>
+			<if test="goods_flag!=0">
+			<![CDATA[
+				goods_flag = #{goods_flag},
+			]]>
+			</if>
+			<if test="goods_status!=0">
+			<![CDATA[
+				goods_status = #{goods_status}
+			]]>
+			</if>
+		</set>
+		<![CDATA[
+			where goods_id = #{goods_id}
+		]]>
+	</update>
+
+	<select id="getGoods" parameterType="Goods" resultType="Goods">
+		<![CDATA[
+			SELECT g.*,u.nick_name,t.goods_pic FROM goods g 
+			  join user u on g.user_id=u.user_id
+	          left join (select p.goods_id,min(p.goods_pic) goods_pic from goods_pic p group by p.goods_id) t 
+	            on g.goods_id=t.goods_id
+		]]>
+		<where>
+			<if test="goods_id!=0">
+			<![CDATA[
+				g.goods_id = #{goods_id}
+			]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="listGoodss" parameterType="Goods" resultType="Goods">
+		<![CDATA[
+			SELECT * FROM (
+			SELECT g.*,u.nick_name,t.goods_pic FROM goods g 
+			  join user u on g.user_id=u.user_id
+	          left join (select p.goods_id,min(p.goods_pic) goods_pic from goods_pic p group by p.goods_id) t 
+	            on g.goods_id=t.goods_id
+		]]>
+		<where>
+			<if test="goods_id!=0">
+			<![CDATA[
+				g.goods_id = #{goods_id}
+			]]>
+			</if>
+			<if test="user_id!=0">
+			<![CDATA[
+				and g.user_id=#{user_id}
+			]]>
+			</if>
+			<if test="goods_name!=null and goods_name!=''">
+			<![CDATA[
+				and g.goods_name like '%${goods_name}%'
+			]]>
+			</if>
+			<if test="goods_type1!=null and goods_type1!=''">
+			<![CDATA[
+				and g.goods_type1 like '%${goods_type1}%'
+			]]>
+			</if>
+			<if test="goods_type2!=null and goods_type2!=''">
+			<![CDATA[
+				and g.goods_type2 like '%${goods_type2}%'
+			]]>
+			</if>
+			<if test="goods_type!=null and goods_type!=''">
+			<![CDATA[
+				and (g.goods_type1 like '%${goods_type}%' or g.goods_type2 like '%${goods_type}%')
+			]]>
+			</if>
+			<if test="goods_flag!=0">
+			<![CDATA[
+				and g.goods_flag = #{goods_flag}
+			]]>
+			</if>
+			<if test="goods_status!=0">
+			<![CDATA[
+				and g.goods_status = #{goods_status}
+			]]>
+			</if>
+		</where>
+		<![CDATA[
+			order by g.goods_date desc,g.goods_id asc) t
+		]]>
+		<if test="start!=-1">
+		<![CDATA[
+			Limit ${start},${limit}
+		]]>
+		</if>
+	</select>
+
+	<select id="listGoodssCount" parameterType="Goods" resultType="int">
+		<![CDATA[
+			SELECT count(*) FROM goods g 
+			  join user u on g.user_id=u.user_id
+	          left join (select p.goods_id,min(p.goods_pic) goods_pic from goods_pic p group by p.goods_id) t 
+	            on g.goods_id=t.goods_id
+		]]>
+		<where>
+			<if test="goods_id!=0">
+			<![CDATA[
+				g.goods_id = #{goods_id}
+			]]>
+			</if>
+			<if test="user_id!=0">
+			<![CDATA[
+				and g.user_id=#{user_id}
+			]]>
+			</if>
+			<if test="goods_name!=null and goods_name!=''">
+			<![CDATA[
+				and g.goods_name like '%${goods_name}%'
+			]]>
+			</if>
+			<if test="goods_type1!=null and goods_type1!=''">
+			<![CDATA[
+				and g.goods_type1 like '%${goods_type1}%'
+			]]>
+			</if>
+			<if test="goods_type2!=null and goods_type2!=''">
+			<![CDATA[
+				and g.goods_type2 like '%${goods_type2}%'
+			]]>
+			</if>
+			<if test="goods_type!=null and goods_type!=''">
+			<![CDATA[
+				and (g.goods_type1 like '%${goods_type}%' or g.goods_type2 like '%${goods_type}%')
+			]]>
+			</if>
+			<if test="goods_flag!=0">
+			<![CDATA[
+				and g.goods_flag = #{goods_flag}
+			]]>
+			</if>
+			<if test="goods_status!=0">
+			<![CDATA[
+				and g.goods_status = #{goods_status}
+			]]>
+			</if>
+		</where>
+	</select>
+	
+	<select id="getGoodsId" parameterType="int" resultType="java.lang.Integer">
+		<![CDATA[
+			SELECT max(goods_id) FROM goods g WHERE 1=1
+			and g.user_id = #{user_id}
+		]]>
+	</select>
+
+</mapper>

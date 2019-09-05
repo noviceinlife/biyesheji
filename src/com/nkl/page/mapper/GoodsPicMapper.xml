@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nkl.page.dao.IGoodsPicDao">
+
+	<insert id="addGoodsPic" parameterType="GoodsPic">
+		<![CDATA[
+			insert into goods_pic
+				values(null,#{goods_id},#{goods_pic})
+		]]>
+	</insert>
+
+	<delete id="delGoodsPic" parameterType="int">
+		<![CDATA[
+			delete from goods_pic where pic_id=#{pic_id}
+		]]>
+	</delete>
+	
+	<delete id="delGoodsPicByGoodsId" parameterType="int">
+		<![CDATA[
+			delete from goods_pic where goods_id=#{goods_id}
+		]]>
+	</delete>
+
+	<delete id="delGoodsPics" parameterType="int">
+		<![CDATA[
+			delete from goods_pic where pic_id in 
+		]]>
+		<foreach collection="array" item="pic_ids"  open="(" separator="," close=")">
+			#{pic_ids}
+		</foreach>
+	</delete>
+
+	<update id="updateGoodsPic" parameterType="GoodsPic">
+		<![CDATA[
+			UPDATE goods_pic
+		]]>
+		<set>
+			<if test="">
+			<![CDATA[
+				
+			]]>
+			</if>
+		</set>
+		<![CDATA[
+			where pic_id = #{pic_id}
+		]]>
+	</update>
+
+	<select id="getGoodsPic" parameterType="GoodsPic" resultType="GoodsPic">
+		<![CDATA[
+			SELECT * FROM goods_pic
+		]]>
+		<where>
+			<if test="pic_id!=0">
+			<![CDATA[
+				pic_id = #{pic_id}
+			]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="listGoodsPics" parameterType="GoodsPic" resultType="GoodsPic">
+		<![CDATA[
+			SELECT * FROM (
+			SELECT * FROM goods_pic
+		]]>
+		<where>
+			<if test="pic_id!=0">
+			<![CDATA[
+				pic_id = #{pic_id}
+			]]>
+			</if>
+			<if test="goods_id!=0">
+			<![CDATA[
+				and goods_id = #{goods_id}
+			]]>
+			</if>
+		</where>
+		<![CDATA[
+			order by pic_id asc) t
+		]]>
+		<if test="start!=-1">
+		<![CDATA[
+			Limit ${start},${limit}
+		]]>
+		</if>
+	</select>
+
+	<select id="listGoodsPicsCount" parameterType="GoodsPic" resultType="int">
+		<![CDATA[
+			SELECT count(*) FROM goods_pic
+		]]>
+		<where>
+			<if test="pic_id!=0">
+			<![CDATA[
+				pic_id = #{pic_id}
+			]]>
+			</if>
+			<if test="goods_id!=0">
+			<![CDATA[
+				and goods_id = #{goods_id}
+			]]>
+			</if>
+		</where>
+	</select>
+
+</mapper>

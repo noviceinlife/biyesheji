@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.nkl.page.dao.ICollectDao">
+
+	<insert id="addCollect" parameterType="Collect">
+		<![CDATA[
+			insert into collect
+				values(null,#{goods_id},#{user_id},#{collect_date})
+		]]>
+	</insert>
+
+	<delete id="delCollect" parameterType="int">
+		<![CDATA[
+			delete from collect where collect_id=#{collect_id}
+		]]>
+	</delete>
+
+	<delete id="delCollects" parameterType="int">
+		<![CDATA[
+			delete from collect where collect_id in 
+		]]>
+		<foreach collection="array" item="collect_ids"  open="(" separator="," close=")">
+			#{collect_ids}
+		</foreach>
+	</delete>
+
+	<update id="updateCollect" parameterType="Collect">
+		<![CDATA[
+			UPDATE collect
+		]]>
+		<set>
+			<if test="">
+			<![CDATA[
+				
+			]]>
+			</if>
+		</set>
+		<![CDATA[
+			where collect_id = #{collect_id}
+		]]>
+	</update>
+
+	<select id="getCollect" parameterType="Collect" resultType="Collect">
+		<![CDATA[
+			SELECT s.*,g.goods_name FROM collect s 
+			  join user u on s.user_id=u.user_id 
+			  join goods g on s.goods_id=g.goods_id
+		]]>
+		<where>
+			<if test="collect_id!=0">
+			<![CDATA[
+				s.collect_id = #{collect_id}
+			]]>
+			</if>
+			<if test="user_id!=0">
+			<![CDATA[
+				and s.user_id = #{user_id}
+			]]>
+			</if>
+			<if test="goods_id!=0">
+			<![CDATA[
+				and s.goods_id = #{goods_id}
+			]]>
+			</if>
+		</where>
+	</select>
+
+	<select id="listCollects" parameterType="Collect" resultType="Collect">
+		<![CDATA[
+			SELECT * FROM (
+			SELECT s.*,g.goods_name FROM collect s 
+			  join user u on s.user_id=u.user_id 
+			  join goods g on s.goods_id=g.goods_id
+		]]>
+		<where>
+			<if test="collect_id!=0">
+			<![CDATA[
+				s.collect_id = #{collect_id}
+			]]>
+			</if>
+			<if test="user_id!=0">
+			<![CDATA[
+				and s.user_id = #{user_id}
+			]]>
+			</if>
+			<if test="goods_id!=0">
+			<![CDATA[
+				and s.goods_id = #{goods_id}
+			]]>
+			</if>
+			<if test="goods_name!=null and goods_name!=''">
+			<![CDATA[
+				and g.goods_name like '%${goods_name}%'
+			]]>
+			</if>
+		</where>
+		<![CDATA[
+			order by s.collect_date desc,s.collect_id asc) t
+		]]>
+		<if test="start!=-1">
+		<![CDATA[
+			Limit ${start},${limit}
+		]]>
+		</if>
+	</select>
+
+	<select id="listCollectsCount" parameterType="Collect" resultType="int">
+		<![CDATA[
+			SELECT count(*) FROM collect s 
+			  join user u on s.user_id=u.user_id 
+			  join goods g on s.goods_id=g.goods_id
+		]]>
+		<where>
+			<if test="collect_id!=0">
+			<![CDATA[
+				s.collect_id = #{collect_id}
+			]]>
+			</if>
+			<if test="user_id!=0">
+			<![CDATA[
+				and s.user_id = #{user_id}
+			]]>
+			</if>
+			<if test="goods_id!=0">
+			<![CDATA[
+				and s.goods_id = #{goods_id}
+			]]>
+			</if>
+			<if test="goods_name!=null and goods_name!=''">
+			<![CDATA[
+				and g.goods_name like '%${goods_name}%'
+			]]>
+			</if>
+		</where>
+	</select>
+
+</mapper>
